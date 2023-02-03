@@ -29,7 +29,7 @@ export default class ProductManager {
 
   async getProductById(id) {
     try {
-      return productModel.findById({_id: id});
+      return productModel.findById({id});
     } catch (error) {
       return error;
     }
@@ -37,7 +37,7 @@ export default class ProductManager {
 
   async updateProduct(id, object) {
     try {
-      return productModel.updateOne({_id: id, object});
+      return productModel.updateOne({id, object});
     } catch (error) {
       return error;
     }
@@ -45,7 +45,7 @@ export default class ProductManager {
 
   async deleteProduct(id) {
     try {
-      return productModel.deleteOne({_id: id});
+      return productModel.deleteOne({id});
     } catch (error) {
       return error;
     }
