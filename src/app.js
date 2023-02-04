@@ -17,7 +17,7 @@ const httpServer = app.listen(8080, () =>
 const io = new Server(httpServer);
 
 mongoose.connect(
-  "mongodb+srv://CoderUser:coderuser123@codercluster.srkjtjy.mongodb.net/?retryWrites=true&w=majority",
+  "mongodb+srv://CoderUser:coderuser123@codercluster.srkjtjy.mongodb.net/ecommerce?retryWrites=true&w=majority",
   (error) => {
     if (error) {
       console.log("No hubo conexion", error);

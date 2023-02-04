@@ -1,12 +1,12 @@
-import {productModel} from "../models/products.model";
+import {productModel} from "../models/products.model.js";
 export default class ProductManager {
   constructor() {}
 
   async getProducts(limit) {
     try {
-      const products = productModel.find();
+      const products = await productModel.find();
       if (limit) {
-        return productModel.find().limit(limit);
+        return await productModel.find().limit(limit);
       } else {
         return products;
       }
@@ -29,7 +29,7 @@ export default class ProductManager {
 
   async getProductById(id) {
     try {
-      return productModel.findById({id});
+      return await productModel.findById({id});
     } catch (error) {
       return error;
     }
@@ -37,7 +37,7 @@ export default class ProductManager {
 
   async updateProduct(id, object) {
     try {
-      return productModel.updateOne({id, object});
+      return await productModel.updateOne({id, object});
     } catch (error) {
       return error;
     }
@@ -45,7 +45,7 @@ export default class ProductManager {
 
   async deleteProduct(id) {
     try {
-      return productModel.deleteOne({id});
+      return await productModel.deleteOne({id});
     } catch (error) {
       return error;
     }

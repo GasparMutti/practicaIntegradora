@@ -4,10 +4,10 @@ const log = document.getElementById("log");
 
 Swal.fire({
   title: "Identify yourself",
-  input: "text",
+  input: "email",
   text: "Enter your e-mail",
   inputValidator: (value) => {
-    return !value && "You need an user name";
+    return !value && "You need an email";
   },
   allowOutsideClick: false,
   allowEscapeKey: false,
