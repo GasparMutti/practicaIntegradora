@@ -1,10 +1,8 @@
 import {Router} from "express";
-import ProductManager from "../dao/fileManager/ProductManager.js";
 import dbProductManager from "../dao/dbManager/ProductManager.js";
 
 const router = Router();
 
-const pm = new ProductManager();
 const dbpm = new dbProductManager();
 
 router.post("/", async (req, res) => {
@@ -18,7 +16,6 @@ router.post("/", async (req, res) => {
     category,
     thumbnails,
   } = req.body;
-
   const product = {
     title,
     description,
@@ -29,33 +26,49 @@ router.post("/", async (req, res) => {
     category,
     thumbnails,
   };
-  const newProduct = await dbpm.addProduct(product);
-  res.json(newProduct);
+
+  const addResponse = await dbpm.addProduct(product);
+
+  !addResponse.error
+    ? res.status(201).send(addResponse)
+    : res.status(addResponse.status).send(addResponse);
 });
 
 router.get("/?", async (req, res) => {
   const limit = +req.query.limit;
-  const products = await dbpm.getProducts();
-  res.json(products);
+  const getResponse = await dbpm.getProducts(limit);
+
+  !getResponse.error
+    ? res.status(200).json(getResponse)
+    : res.status(getResponse.status).send(getResponse);
 });
 
 router.get("/:pid", async (req, res) => {
   const id = req.params.pid;
-  const product = await dbpm.getProductById(id);
-  res.json(product);
+  const getResponse = await dbpm.getProductById(id);
+
+  !getResponse.error
+    ? res.send(getResponse)
+    : res.status(getResponse.status).send(getResponse);
 });
 
 router.put("/:pid", async (req, res) => {
   const id = req.params.pid;
   const object = req.body;
-  const productUpdated = await dbpm.updateProduct(id, object);
-  res.json(productUpdated);
+  const updateResponse = await dbpm.updateProduct(id, object);
+
+  !updateResponse.error
+    ? res.send(updateResponse)
+    : res.status(updateResponse.status).send(updateResponse);
 });
 
 router.delete("/:pid", async (req, res) => {
   const id = req.params.pid;
-  const productDeleted = await dbpm.deleteProduct(id);
-  res.json(productDeleted);
+  const deleteResponse = await dbpm.deleteProduct(id);
+
+  !deleteResponse.error
+    ? res.send(deleteResponse)
+    : res.status(deleteResponse.status).send(deleteResponse);
 });
 
 export default router;

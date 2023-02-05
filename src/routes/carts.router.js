@@ -1,49 +1,42 @@
 import {Router} from "express";
-import CartsManager from "../dao/fileManager/CartsManager.js";
+import dbCartsManager from "../dao/dbManager/CartsManager.js";
 
 const router = Router();
 
-const cm = new CartsManager();
+const dbcm = new dbCartsManager();
 
 router.post("/", async (req, res) => {
-  const response = await cm.addCart();
-  if (!response.error) {
-    res.send(response);
-  } else {
-    res.status(response.status).send(response);
-  }
+  const addResponse = await dbcm.addCart();
+
+  !addResponse.error
+    ? res.send(addResponse)
+    : res.status(addResponse.status).send(addResponse);
 });
 
 router.get("/:cid", async (req, res) => {
-  const id = +req.params.cid;
-  const response = await cm.getCartById(id);
-  if (!response.error) {
-    res.send(response.cart.products);
-  } else {
-    res.status(response.status).send(response);
-  }
+  const id = req.params.cid;
+  const getResponse = await dbcm.getCartById(id);
+
+  !getResponse.error
+    ? res.send(getResponse)
+    : res.status(getResponse.status).send(getResponse);
 });
 
 router.post("/:cid/products/:pid", async (req, res) => {
-  const cid = +req.params.cid;
-  const pid = +req.params.pid;
-  const response = await cm.addProductToCart(cid, pid);
-  if (!response.error) {
-    res.send(response);
-  } else {
-    res.status(response.status).send(response);
-  }
+  const cid = req.params.cid;
+  const pid = req.params.pid;
+  const updateResponse = await dbcm.addProductToCart(cid, pid);
+
+  !updateResponse.error
+    ? res.send(updateResponse)
+    : res.status(updateResponse.status).send(updateResponse);
 });
 
 router.delete("/:cid/products/:pid", async (req, res) => {
-  const cid = +req.params.cid;
-  const pid = +req.params.pid;
-  const response = await cm.removeToCart(cid, pid);
-  if (!response.error) {
-    res.send(response);
-  } else {
-    res.status(response.status).send(response);
-  }
+  const cid = req.params.cid;
+  const pid = req.params.pid;
+  const cartUpdated = await dbcm.removeToCart(cid, pid);
+  res.send(cartUpdated);
 });
 
 export default router;
