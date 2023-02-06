@@ -36,7 +36,7 @@ export default class CartsManager {
           status: 404,
           error: `Cart with id ${id} not found`,
         };
-      return cart;
+      return cart.products;
     } catch (error) {
       return {
         status: 500,
@@ -53,13 +53,27 @@ export default class CartsManager {
           status: 404,
           error: `Cart with id ${cid} not found`,
         };
+
       const productFinded = await dbpm.getProductById(pid);
       if (productFinded.status === 404 || productFinded.error)
         return {
           status: 404,
           error: `Product with id ${pid} not found`,
         };
-      return await cartModel.findByIdAndUpdate(cid, {$push: {products: pid}});
+
+      const productInCart = cartFinded.find((product) => product.pid === pid);
+      if (productInCart) {
+        const productIndex = cartFinded.findIndex(
+          (product) => product.pid === pid
+        );
+        const newCart = cartFinded;
+        newCart[productIndex].quantity++;
+        return await cartModel.findByIdAndUpdate(cid, {products: newCart});
+      }
+
+      return await cartModel.findByIdAndUpdate(cid, {
+        $push: {products: {pid, quantity: 1}},
+      });
     } catch (error) {
       return {
         status: 500,
@@ -70,11 +84,25 @@ export default class CartsManager {
 
   async removeToCart(cid, pid) {
     try {
-      return await cartModel.findByIdAndUpdate(cid, {$pull: {products: pid}});
+      const cartFinded = await this.getCartById(cid);
+      if (cartFinded.status === 404 || cartFinded.error)
+        return {
+          status: 404,
+          error: `Cart with id ${cid} not found`,
+        };
+
+      const productInCart = cartFinded.find((product) => product.pid === pid);
+      if (!productInCart) {
+        return {
+          status: 404,
+          error: `Product with id ${pid} not found`,
+        };
+      }
+      return await cartModel.findByIdAndUpdate(cid, {$pull: {products: {pid}}});
     } catch (error) {
       return {
         status: 500,
-        error: `An error occurred while deleting the product with id ${id}`,
+        error: `An error occurred while deleting the product with id ${pid}`,
       };
     }
   }
